@@ -8,15 +8,19 @@
 import os
 import time
 import getch
+import random
 
 left_paddle_x = 3
 right_paddle_x = 3
 frame = 0
 ball_x = 4
 ball_y = 4
+ball_direction = "--"
+game_state = 0
+message = "TBC"
 
 def print_screen():
-  os.system("clear")
+  #os.system("clear")
   print("--Pong--")
   #print(grid_height)
   for pixel_row in pixels:
@@ -31,9 +35,13 @@ def print_screen():
   print(" ")
   print("Debug:")
   print("frame: ", frame)
+  print("ball_x: ", ball_x)
+  print("ball_y: ", ball_y)
   print("left_paddle_x: ", left_paddle_x)
   print("right_paddle_x: ", right_paddle_x)
-  
+  print("ball_direction: ", ball_direction)
+  print("ball_direction: ", ball_direction[0])
+  print("ball_direction: ", ball_direction[1])
 
 def left_paddle_up():
   global left_paddle_x
@@ -63,8 +71,64 @@ def right_paddle_down():
     right_paddle_x += 1
   pixels[right_paddle_x][7] = "|"
 
+def move_ball():
+  global ball_x
+  global ball_y
+  global ball_direction
+  global pixels
+  if ball_direction == "--":
+    if bool( random.getrandbits(1) ):
+      ball_direction = "se"
+    else:
+      ball_direction = "sw"
 
-pixels = [["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"]]
+  #print("ball_direction: ", ball_direction)
+
+  pixels[ball_x][ball_y] = 0
+
+  if ball_direction[1] == "e":
+    ball_y += 1
+  if ball_direction[1] == "w":
+    ball_y -= 1
+
+  if ball_direction[0] == "n":
+    ball_x -= 1
+  if ball_direction[0] == "s":
+    ball_x += 1
+
+  if check_edge():
+    pixels[ball_x][ball_y] = "o"
+
+
+def check_edge():
+  global ball_x
+  global ball_y
+  global ball_direction
+  global pixels
+  global game_state
+  if (ball_y == 0):
+    game_state = "r"
+  elif (ball_y == 7):
+    game_state = "l"
+  
+  if game_state:
+    return 0
+  else:
+    return 1
+
+
+
+def check_game_state():
+  global pixels
+  global game_state
+  if game_state == "l":
+    pixels = [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,"l","e","f","t",0,0],[0,0,0,0,0,0,0,0],[0,0,"w","i","n","s",0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]
+  elif game_state == "r":
+    pixels = [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,"r","i","g","h","t",0],[0,0,0,0,0,0,0,0],[0,0,"w","i","n","s",0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]
+
+
+
+pixels = [["-","-","-","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"],["X","X","X","X","X","X","X","X"]]
 print_screen()
 # have a wee sleep
 time.sleep(1)
@@ -88,7 +152,7 @@ pixels = [[0,0,0,0,0,0,0,0],[0,0,0,"X","X",0,0,0],[0,0,"X","X","X",0,0,0],[0,0,0
 print_screen()
 time.sleep(0.3)
 
-direction_of_travel = "ne"
+#direction_of_travel = "ne"
 
 
 
@@ -141,7 +205,6 @@ while frame < 20:
       left_paddle_down()
       left_pressed = 1
 
-
     if keypress1 == "k" and right_pressed == 0:
       right_paddle_up()
       right_pressed = 1
@@ -158,12 +221,21 @@ while frame < 20:
       right_paddle_down()
       right_pressed = 1
 
+    move_ball()
+
     
+
+    #check_paddle_hit()
 
     #pixels[7][1] = left_paddle_x
     #pixels[7][6] = right_paddle_x
 
+    check_game_state()
+
     print_screen()
+    
+    if game_state:
+      quit()
     
     # increment the loop variable
     frame += 1
