@@ -96,6 +96,9 @@ def move_ball():
   if ball_direction[0] == "s":
     ball_x += 1
 
+  # TODO: check if beside a paddle
+  #if 
+
   if check_edge():
     pixels[ball_x][ball_y] = "o"
 
