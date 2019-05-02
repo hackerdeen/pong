@@ -10,12 +10,14 @@ import time
 import getch
 import random
 
+# config options
 left_paddle_x = 3
 right_paddle_x = 3
 frame = 0
 ball_x = 4
 ball_y = 4
-ball_direction = "--"
+#ball_direction = "--"
+ball_direction = "nw"
 game_state = 0
 message = "TBC"
 
@@ -84,7 +86,17 @@ def move_ball():
 
   #print("ball_direction: ", ball_direction)
 
+  # set the current pixel to be blank
   pixels[ball_x][ball_y] = 0
+
+  # TODO: check if beside a paddle
+  if ball_direction[1] == "w": 
+    if ball_y == 1:
+      ball_direction[1] == "e"
+
+  if ball_direction[1] == "e": 
+    if ball_y == 6:
+      ball_direction[1] == "w"
 
   if ball_direction[1] == "e":
     ball_y += 1
@@ -96,8 +108,7 @@ def move_ball():
   if ball_direction[0] == "s":
     ball_x += 1
 
-  # TODO: check if beside a paddle
-  #if 
+
 
   if check_edge():
     pixels[ball_x][ball_y] = "o"
